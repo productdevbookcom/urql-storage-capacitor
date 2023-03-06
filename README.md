@@ -1,5 +1,7 @@
 # URQL Storage Capacitor
 
+![URQL Storage Capacitor](./.github/assets/bannurql-storage-capacitor.png)
+
 
 <p>
       <a href="https://www.npmjs.com/package/urql-storage-capacitor"><img src="https://img.shields.io/npm/v/urql-storage-capacitor.svg?style=flat&colorA=002438&colorB=28CF8D" alt="Version"></a>

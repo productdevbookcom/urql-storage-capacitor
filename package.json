@@ -1,6 +1,6 @@
 {
   "name": "urql-storage-capacitor",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Graphcache offline storage for Capacitor",
   "keywords": [
     "urql",

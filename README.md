@@ -1,42 +1,70 @@
-# Typescript Bundle Template
-
-This is a template for creating a Typescript bundle. It is based on the [Typescript](https://www.typescriptlang.org/) compiler with the [Tsup](https://github.com/egoist/tsup) bundler.
-
-## Features
-
-- [x] [Typescript](https://www.typescriptlang.org/)
-- [x] [Tsup](https://github.com/egoist/tsup)
-- [x] [ESLint](https://eslint.org/) with [Antfu's ESLint Config](https://github.com/antfu/eslint-config)
-- [x] [Bumpp](https://github.com/antfu/bumpp) github changelog generator
-- [x] [Vitest](https://vitest.dev/)
-- [x] [Pnpm](https://pnpm.io/)
-- [x] [GitHub Actions]()
-- [x] [NPM Local Registry]()
-- [x] [Renovate]()
+# URQL urql-storage-capacitor Capacitor
 
 
-## Usage
+<p>
+      <a href="https://www.npmjs.com/package/urql-storage-capacitor"><img src="https://img.shields.io/npm/v/urql-storage-capacitor.svg?style=flat&colorA=002438&colorB=28CF8D" alt="Version"></a>
+      <a href="https://www.npmjs.com/package/urql-storage-capacitor"><img src="https://img.shields.io/npm/dm/urql-storage-capacitor.svg?style=flat&colorA=002438&colorB=28CF8D" alt="Downloads"></a>
+      <a href="./LICENSE"><img src="https://img.shields.io/github/license/productdevbookcom/urql-storage-capacitor.svg?style=flat&colorA=002438&colorB=28CF8D" alt="License"></a>
+      <a href="https://github.com/productdevbookcom/urql-storage-capacitor">
+      <img src="https://img.shields.io/github/stars/productdevbookcom/urql-storage-capacitor.svg?style=social&label=Star&maxAge=2592000" alt="Github Stars"> </a>
+</p>
 
-1. To use this template, click the "Use this template" button above.
-2. Clone the repository to your local machine.
-3. Run `pnpm install` to install the dependencies.
-4. Run `pnpm build` to build the bundle.
-5. Run `pnpm start` to start the bundle.
-6. Run `pnpm lint` to lint the code. (You can also run `pnpm lint:fix` to fix the linting errors.)
-7. Run `pnpm test` to run the tests. (You can also run `pnpm test:watch` to run the tests in watch mode.)
-8. Run `pnpm release` to bump the version. Terminal will ask you to select the version type. And then it will automatically commit and push the changes. GitHub Actions will automatically publish git tags. NPM local registry will automatically publish the package.
 
-## Configuration
+## Installation
 
-### Github Secrets
+```bash
+pnpm install urql-storage-capacitor
+```
 
-[Github Token](https://github.com/settings/tokens) is required github changelog generator. You can create a token.  Select the `repo` scope. Then add the token to the repository secrets. 
+`urql-storage-capacitor` is a Graphcache offline storage for Capacitor.
 
-`REPOCHANGELOG_TOKEN` - add the token to the repository secrets.
+It is compatible for both plain Capacitor (including managed workflow), but it has a two peer dependencies - [Capacitor Preferences](https://capacitorjs.com/docs/apis/preferences) and [Capacitor Network](https://capacitorjs.com/docs/apis/network) - which must be installed separately. AsyncStorage will be used to persist the data, and NetInfo will be used to determine when the app is online and offline.
 
-### Renovate
+## Quick Start Guide
 
-[Setup Github App](https://github.com/apps/renovate) for Renovate.
+Install Capacitor Preferences[https://capacitorjs.com/docs/apis/preferences] and Capacitor Network[https://capacitorjs.com/docs/apis/network] alongside `urql-storage-capacitor`:
+
+Install `urql-storage-capacitor` alongside `urql` and `@urql/exchange-graphcache`:
+
+```sh
+pnpm add urql-storage-capacitor
+# or 
+yarn add urql-storage-capacitor
+# or
+npm install --save urql-storage-capacitor
+```
+
+Then add it to the offline exchange:
+
+```js
+import { createClient, dedupExchange, fetchExchange } from 'urql'
+import { offlineExchange } from '@urql/exchange-graphcache'
+import { makeAsyncStorage } from 'urql-storage-capacitor'
+
+const storage = makeAsyncStorage({
+  dataKey: 'graphcache-data', // The AsyncStorage key used for the data (defaults to graphcache-data)
+  metadataKey: 'graphcache-metadata', // The AsyncStorage key used for the metadata (defaults to graphcache-metadata)
+  maxAge: 7, // How long to persist the data in storage (defaults to 7 days)
+})
+
+const cache = offlineExchange({
+  schema,
+  storage,
+  updates: {
+    /* ... */
+  },
+  optimistic: {
+    /* ... */
+  },
+})
+
+const client = createClient({
+  url: 'http://localhost:3000/graphql',
+  exchanges: [dedupExchange, cache, fetchExchange],
+})
+```
+
+
 
 ## License
 

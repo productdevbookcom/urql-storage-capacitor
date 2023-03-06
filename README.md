@@ -1,4 +1,4 @@
-# URQL urql-storage-capacitor Capacitor
+# URQL Storage Capacitor
 
 
 <p>

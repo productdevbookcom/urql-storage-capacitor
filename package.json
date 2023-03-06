@@ -1,11 +1,24 @@
 {
-  "name": "ts-bundle-template",
+  "name": "urql-storage-capacitor",
   "version": "1.0.0",
   "description": "add description",
   "keywords": [
-    "add keywords"
+    "urql",
+    "graphql client",
+    "graphql",
+    "exchanges",
+    "capacitor",
+    "offline",
+    "storage"
   ],
-  "author": "add author",
+  "homepage": "https://github.com/productdevbookcom/urql-storage-capacitor",
+  "bugs": "https://github.com/productdevbookcom/urql-storage-capacitor/issues",
+  "author": "Mehmet ",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/productdevbookcom/urql-storage-capacitor.git"
+  },
+  "funding": "https://github.com/sponsors/productdevbook",
   "engines": {
     "node": ">=16"
   },
@@ -21,7 +34,9 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup --dts",
@@ -33,9 +48,18 @@
     "test": "vitest",
     "test:watch": "vitest --watch"
   },
-  "license": "ISC",
+  "license": "MIT",
+  "peerDependencies": {
+    "@capacitor/core": ">=4.0.0",
+    "@capacitor/network": ">=4.0.0",
+    "@capacitor/preferences": ">=4.0.0",
+    "@urql/exchange-graphcache": ">=5.0.0"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^0.36.0",
+    "@capacitor/network": "^4.1.0",
+    "@capacitor/preferences": "^4.0.2",
+    "@urql/exchange-graphcache": "^5.0.9",
     "@vitest/coverage-c8": "^0.29.2",
     "bumpp": "^9.0.0",
     "eslint": "^8.35.0",
@@ -43,5 +67,8 @@
     "typescript": "^4.9.5",
     "vite": "^4.1.4",
     "vitest": "^0.29.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

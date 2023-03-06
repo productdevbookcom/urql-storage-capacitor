@@ -2,6 +2,9 @@ lockfileVersion: 5.4
 
 specifiers:
   '@antfu/eslint-config': ^0.36.0
+  '@capacitor/network': ^4.1.0
+  '@capacitor/preferences': ^4.0.2
+  '@urql/exchange-graphcache': ^5.0.9
   '@vitest/coverage-c8': ^0.29.2
   bumpp: ^9.0.0
   eslint: ^8.35.0
@@ -12,6 +15,9 @@ specifiers:
 
 devDependencies:
   '@antfu/eslint-config': 0.36.0_ycpbpc6yetojsgtrx3mwntkhsu
+  '@capacitor/network': 4.1.0
+  '@capacitor/preferences': 4.0.2
+  '@urql/exchange-graphcache': 5.0.9
   '@vitest/coverage-c8': 0.29.2_vitest@0.29.2
   bumpp: 9.0.0
   eslint: 8.35.0
@@ -141,6 +147,18 @@ packages:
 
   /@bcoe/v8-coverage/0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
+    dev: true
+
+  /@capacitor/network/4.1.0:
+    resolution: {integrity: sha512-GMJ6LmxmrFA55rAaYxgm4tKSZyUmuLRreQz5Gdu0P09Ja8abSjmXa/DX16gOu1I1+wqHWm2rRI6nPkeUH55Ibw==}
+    peerDependencies:
+      '@capacitor/core': ^4.0.0
+    dev: true
+
+  /@capacitor/preferences/4.0.2:
+    resolution: {integrity: sha512-HgcRkMdVHSIV3TeQLZFmCaCeMWQ25wLyZZ7dA2f8Rw81Q1Nroxsi7HxTEGNqrWKSN9PNKBJD8vChr6eB2GNtZg==}
+    peerDependencies:
+      '@capacitor/core': ^4.0.0
     dev: true
 
   /@esbuild/android-arm/0.16.17:
@@ -815,6 +833,23 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.54.0
       eslint-visitor-keys: 3.3.0
+    dev: true
+
+  /@urql/core/3.1.1:
+    resolution: {integrity: sha512-Mnxtq4I4QeFJsgs7Iytw+HyhiGxISR6qtyk66c9tipozLZ6QVxrCiUPF2HY4BxNIabaxcp+rivadvm8NAnXj4Q==}
+    peerDependencies:
+      graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+    dependencies:
+      wonka: 6.2.3
+    dev: true
+
+  /@urql/exchange-graphcache/5.0.9:
+    resolution: {integrity: sha512-GYhN4YDL+/alF6ci1OFOaL0Ze0GinmuYWrjQjpjl8kP/9ZbXY2LLN/3ZlRG9cCks1nxyea/9h4IS0mk5LS57lA==}
+    peerDependencies:
+      graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+    dependencies:
+      '@urql/core': 3.1.1
+      wonka: 6.2.3
     dev: true
 
   /@vitest/coverage-c8/0.29.2_vitest@0.29.2:
@@ -3678,6 +3713,10 @@ packages:
     dependencies:
       siginfo: 2.0.0
       stackback: 0.0.2
+    dev: true
+
+  /wonka/6.2.3:
+    resolution: {integrity: sha512-EFOYiqDeYLXSzGYt2X3aVe9Hq1XJG+Hz/HjTRRT4dZE9q95khHl5+7pzUSXI19dbMO1/2UMrTf7JT7/7JrSQSQ==}
     dev: true
 
   /word-wrap/1.2.3:

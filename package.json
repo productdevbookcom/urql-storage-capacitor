@@ -1,7 +1,7 @@
 {
   "name": "urql-storage-capacitor",
   "version": "1.0.0",
-  "description": "add description",
+  "description":"Graphcache offline storage for Capacitor",
   "keywords": [
     "urql",
     "graphql client",
@@ -13,7 +13,7 @@
   ],
   "homepage": "https://github.com/productdevbookcom/urql-storage-capacitor",
   "bugs": "https://github.com/productdevbookcom/urql-storage-capacitor/issues",
-  "author": "Mehmet ",
+  "author": "productdevbook",
   "repository": {
     "type": "git",
     "url": "https://github.com/productdevbookcom/urql-storage-capacitor.git"
@@ -42,7 +42,7 @@
     "build": "tsup --dts",
     "dev": "tsup --watch",
     "prepublishOnly": "pnpm run build",
-    "release": "bumpp --commit --push --tag && pnpm publish",
+    "release": "pnpm build && bumpp --commit --push --tag && pnpm publish",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx .",
     "lint:fix": "eslint --ext .ts,.tsx,.js,.jsx . --fix",
     "test": "vitest",

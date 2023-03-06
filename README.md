@@ -1,6 +1,6 @@
 # URQL Storage Capacitor
 
-![URQL Storage Capacitor](./.github/assets/bannurql-storage-capacitor.png)
+![URQL Storage Capacitor](./.github/assets/urql-storage-capacitor.png)
 
 
 <p>

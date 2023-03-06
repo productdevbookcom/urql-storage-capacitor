@@ -66,6 +66,9 @@ const client = createClient({
 })
 ```
 
+# Inspiration
+
+This project is inspired by [@urql/storage-rn](https://github.com/urql-graphql/urql/tree/main/packages/storage-rn)
 
 
 ## License

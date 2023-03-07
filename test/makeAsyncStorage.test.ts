@@ -1,27 +1,57 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { Preferences } from '@capacitor/preferences'
-import { Network } from '@capacitor/network'
+import { ConnectionStatusChangeListener, Network } from '@capacitor/network'
 import { makeAsyncStorage } from '../src/makeAsyncStorage'
 
 vi.mock('@capacitor/network', () => ({
-  addEventListener: () => 'addEventListener',
-  default: {
-    addEventListener: () => 'addEventListener',
-  },
+  Network: {
+    async getStatus() {
+      return {
+        connected: true,
+        connectionType: 'unknown',
+      }
+    },
+    addListener(_eventName: 'networkStatusChange', _callback: ConnectionStatusChangeListener) {
+      return {
+        remove: () => Promise.resolve(),
+        connected: true,
+        connectionType: 'unknown',
+      }
+    },
+  } as import('@capacitor/network').NetworkPlugin,
 }))
 
 vi.mock('@capacitor/preferences', () => ({
-  default: {
-    set: () => 'set',
-    get: () => 'get',
-    keys: () => 'keys',
-    remove: () => 'remove',
-  },
-  set: () => 'set',
-  get: () => 'get',
-  keys: () => 'keys',
-  remove: () => 'remove',
+  Preferences: {
+    async configure(_opts: any) {
+      /* noop */
+    },
+    async set(_opts: any) {
+      /* noop */
+    },
+    async get(_opts: any) {
+      return { value: '' }
+    },
+    async keys() {
+      return { keys: [] }
+    },
+    async remove(_opts: any) {
+      /* noop */
+    },
+    async clear() {
+      /* noop */
+    },
+    async migrate() {
+      return {
+        migrated: [],
+        existing: [],
+      }
+    },
+    async removeOld() {
+      /* noop */
+    },
+  } as import('@capacitor/preferences').PreferencesPlugin,
 }))
 
 const request = [
@@ -48,11 +78,12 @@ describe('makeAsyncStorage', () => {
       const storage = makeAsyncStorage()
 
       if (storage && storage.writeMetadata)
-        await storage.writeMetadata(request)
-
+        storage.writeMetadata(request)
       expect(setItemSpy).toHaveBeenCalledWith(
-        'graphcache-metadata',
-        serializedRequest,
+        {
+          key: 'graphcache-metadata',
+          value: serializedRequest,
+        },
       )
     })
 
@@ -63,11 +94,13 @@ describe('makeAsyncStorage', () => {
       const storage = makeAsyncStorage({ metadataKey: 'my-custom-key' })
 
       if (storage && storage.writeMetadata)
-        await storage.writeMetadata(request)
+        storage.writeMetadata(request)
 
       expect(setItemSpy).toHaveBeenCalledWith(
-        'my-custom-key',
-        serializedRequest,
+        {
+          key: 'my-custom-key',
+          value: serializedRequest,
+        },
       )
     })
   })
@@ -81,7 +114,7 @@ describe('makeAsyncStorage', () => {
 
       if (storage && storage.readMetadata) {
         const result = await storage.readMetadata()
-        expect(getItemSpy).toHaveBeenCalledWith('graphcache-metadata')
+        expect(getItemSpy).toHaveBeenCalledWith({ key: 'graphcache-metadata' })
         expect(result).toEqual([])
       }
     })
@@ -94,7 +127,7 @@ describe('makeAsyncStorage', () => {
 
       if (storage && storage.readMetadata) {
         const result = await storage.readMetadata()
-        expect(getItemSpy).toHaveBeenCalledWith('graphcache-metadata')
+        expect(getItemSpy).toHaveBeenCalledWith({ key: 'graphcache-metadata' })
         expect(result).toEqual(request)
       }
     })
@@ -107,7 +140,7 @@ describe('makeAsyncStorage', () => {
 
       if (storage && storage.readMetadata) {
         const result = await storage.readMetadata()
-        expect(getItemSpy).toHaveBeenCalledWith('my-custom-key')
+        expect(getItemSpy).toHaveBeenCalledWith({ key: 'my-custom-key' })
         expect(result).toEqual(request)
       }
     })
@@ -119,7 +152,7 @@ describe('makeAsyncStorage', () => {
 
       if (storage && storage.readMetadata) {
         const result = await storage.readMetadata()
-        expect(getItemSpy).toHaveBeenCalledWith('graphcache-metadata')
+        expect(getItemSpy).toHaveBeenCalledWith({ key: 'graphcache-metadata' })
         expect(result).toEqual([])
       }
     })
@@ -139,8 +172,10 @@ describe('makeAsyncStorage', () => {
         await storage.writeData(entires)
 
       expect(setItemSpy).toHaveBeenCalledWith(
-        'graphcache-data',
-        `{"${dayStamp}":${serializedEntries}}`,
+        {
+          key: 'graphcache-data',
+          value: `{"${dayStamp}":${serializedEntries}}`,
+        },
       )
     })
 
@@ -157,8 +192,10 @@ describe('makeAsyncStorage', () => {
         await storage.writeData(entires)
 
       expect(setItemSpy).toHaveBeenCalledWith(
-        'my-custom-key',
-        `{"${dayStamp}":${serializedEntries}}`,
+        {
+          key: 'my-custom-key',
+          value: `{"${dayStamp}":${serializedEntries}}`,
+        },
       )
     })
 
@@ -176,8 +213,10 @@ describe('makeAsyncStorage', () => {
         await storage.writeData(entires)
 
       expect(setItemSpy).toHaveBeenCalledWith(
-        'graphcache-data',
-        `{"${dayStamp}":${serializedEntries}}`,
+        {
+          key: 'graphcache-data',
+          value: `{"${dayStamp}":${serializedEntries}}`,
+        },
       )
 
       // write twice
@@ -188,8 +227,10 @@ describe('makeAsyncStorage', () => {
         storage.writeData({ foo: 'bar' })
 
       expect(secondSetItemSpy).toHaveBeenCalledWith(
-        'graphcache-data',
-        `{"${dayStamp}":${JSON.stringify({ hello: 'world', foo: 'bar' })}}`,
+        {
+          key: 'graphcache-data',
+          value: `{"${dayStamp}":${JSON.stringify({ hello: 'world', foo: 'bar' })}}`,
+        },
       )
     })
 
@@ -197,10 +238,9 @@ describe('makeAsyncStorage', () => {
       vi.spyOn(Date.prototype, 'valueOf').mockReturnValueOnce(1632209690641)
       const dayStamp = 18891
       const oldDayStamp = 18857
-      vi.spyOn(Preferences, 'get').mockResolvedValueOnce({
-        key: 'graphcache-data',
-        value: JJSON.stringify({ [oldDayStamp]: { foo: 'bar' } }),
-      })
+      vi.spyOn(Preferences, 'get').mockResolvedValueOnce(
+        JSON.stringify({ [oldDayStamp]: { foo: 'bar' } }) as any,
+      )
 
       const setItemSpy = vi.fn()
       vi.spyOn(Preferences, 'set').mockImplementationOnce(setItemSpy)
@@ -211,8 +251,10 @@ describe('makeAsyncStorage', () => {
         await storage.writeData(entires)
 
       expect(setItemSpy).toHaveBeenCalledWith(
-        'graphcache-data',
-        JSON.stringify({ [oldDayStamp]: { foo: 'bar' }, [dayStamp]: entires }),
+        {
+          key: 'graphcache-data',
+          value: JSON.stringify({ [oldDayStamp]: { foo: 'bar' }, [dayStamp]: entires }),
+        },
       )
     })
 
@@ -224,7 +266,7 @@ describe('makeAsyncStorage', () => {
           [dayStamp]: { foo: 'bar', hello: 'world' },
           [dayStamp - 1]: { foo: 'bar', hello: 'world' },
           [dayStamp - 2]: { foo: 'bar', hello: 'world' },
-        }),
+        }) as any,
       )
 
       const setItemSpy = vi.fn()
@@ -236,12 +278,14 @@ describe('makeAsyncStorage', () => {
         await storage.writeData({ foo: 'new', hello: undefined })
 
       expect(setItemSpy).toHaveBeenCalledWith(
-        'graphcache-data',
-        JSON.stringify({
-          [dayStamp]: { foo: 'new' },
-          [dayStamp - 1]: { foo: 'bar' },
-          [dayStamp - 2]: { foo: 'bar' },
-        }),
+        {
+          key: 'graphcache-data',
+          value: JSON.stringify({
+            [dayStamp]: { foo: 'new' },
+            [dayStamp - 1]: { foo: 'bar' },
+            [dayStamp - 2]: { foo: 'bar' },
+          }),
+        },
       )
     })
   })
@@ -255,7 +299,7 @@ describe('makeAsyncStorage', () => {
 
       if (storage && storage.readData) {
         const result = await storage.readData()
-        expect(getItemSpy).toHaveBeenCalledWith('graphcache-data')
+        expect(getItemSpy).toHaveBeenCalledWith({ key: 'graphcache-data' })
         expect(result).toEqual({})
       }
     })
@@ -271,7 +315,7 @@ describe('makeAsyncStorage', () => {
 
       if (storage && storage.readData) {
         const result = await storage.readData()
-        expect(getItemSpy).toHaveBeenCalledWith('graphcache-data')
+        expect(getItemSpy).toHaveBeenCalledWith({ key: 'graphcache-data' })
         expect(result).toEqual(entires)
       }
     })
@@ -292,7 +336,7 @@ describe('makeAsyncStorage', () => {
 
       if (storage && storage.readData) {
         const result = await storage.readData()
-        expect(getItemSpy).toHaveBeenCalledWith('graphcache-data')
+        expect(getItemSpy).toHaveBeenCalledWith({ key: 'graphcache-data' })
         expect(result).toEqual({
           one: 'one',
           two: 'two',
@@ -309,7 +353,7 @@ describe('makeAsyncStorage', () => {
         [dayStamp]: entires, // should be kept
         [dayStamp - maxAge + 1]: entires, // should be kept
         [dayStamp - maxAge - 1]: { old: 'data' }, // should get deleted
-      })
+      }) as any
       vi.spyOn(Preferences, 'get').mockResolvedValueOnce(mockData)
       const setItemSpy = vi.fn()
       vi.spyOn(Preferences, 'set').mockImplementationOnce(setItemSpy)
@@ -320,11 +364,13 @@ describe('makeAsyncStorage', () => {
         const result = await storage.readData()
         expect(result).toEqual(entires)
         expect(setItemSpy).toBeCalledWith(
-          'graphcache-data',
-          JSON.stringify({
-            [dayStamp]: entires,
-            [dayStamp - maxAge + 1]: entires,
-          }),
+          {
+            key: 'graphcache-data',
+            value: JSON.stringify({
+              [dayStamp]: entires,
+              [dayStamp - maxAge + 1]: entires,
+            }),
+          },
         )
       }
     })
@@ -347,9 +393,10 @@ describe('makeAsyncStorage', () => {
 
     it('calls the callback when the device comes online', () => {
       const callbackSpy = vi.fn()
-      let networkCallback
+      let networkCallback: any
       vi.spyOn(Network, 'addListener').mockImplementationOnce((callback) => {
         networkCallback = callback
+
         return () => null
       })
 
@@ -398,8 +445,8 @@ describe('makeAsyncStorage', () => {
       if (storage && storage.clear)
         await storage.clear()
 
-      expect(removeItemSpy).toHaveBeenCalledWith('my-data')
-      expect(secondRemoveItemSpy).toHaveBeenCalledWith('my-metadata')
+      expect(removeItemSpy).toHaveBeenCalledWith({ key: 'my-data' })
+      expect(secondRemoveItemSpy).toHaveBeenCalledWith({ key: 'my-metadata' })
     })
   })
 })
